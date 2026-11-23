@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AcademiaSeat — Exam Operations</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Public+Sans:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#eef2f7;--page:#6b1426;--panel:#3d0a15;--panel-ink:#e8eef5;--card:#fff;--ink:#1d2b3a;--muted:#5b6b7c;--line:#cfd8e3;--seat:#3a4f66;--seat-free:#2f8f83;--accent:#f2b632;--accent-ink:#1d2b3a;--err:#b3261e;--ok:#17714f;--focus:#0b5fd6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101821;--panel:#3d0a15;--card:#17222e;--ink:#e8eef5;--muted:#9aabbd;--line:#2c3b4b;--err:#ff8a80;--ok:#6fd3a8;--focus:#7db2ff}}
+:root[data-theme="dark"]{--bg:#101821;--panel:#3d0a15;--card:#17222e;--ink:#e8eef5;--muted:#9aabbd;--line:#2c3b4b;--err:#ff8a80;--ok:#6fd3a8;--focus:#7db2ff}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100vh;background:var(--page);color:#fff;font:400 16px/1.5 "Public Sans",system-ui,sans-serif}
+h1,h2,h3,.brand{font-family:"Bricolage Grotesque",system-ui,sans-serif;margin:0}
+.hide{display:none!important}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.link{background:none;border:0;color:var(--focus);text-decoration:underline;cursor:pointer;padding:0}
+.btn{border:0;border-radius:10px;background:var(--accent);color:var(--accent-ink);font-weight:700;padding:11px 18px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.full{width:100%;padding:13px}.btn:hover{filter:brightness(.95)}
+.brand{font-weight:700;font-size:1.25rem;display:flex;align-items:center;gap:10px}
+.brand i{width:28px;height:28px;border-radius:6px 6px 12px 12px;background:var(--accent);display:inline-block}
+/* login */
+.wrap{display:grid;grid-template-columns:1.05fr 1fr;min-height:100vh}
+.side{background:var(--panel);color:var(--panel-ink);padding:48px clamp(24px,5vw,72px);display:flex;flex-direction:column;justify-content:space-between;gap:32px}
+.side h1{font-size:clamp(2rem,4vw,3.2rem);line-height:1.08;margin:0 0 12px;max-width:14ch}
+.side p,.hall-cap{margin:0;color:#b9c6d4;max-width:38ch}.hall-cap{font-size:.875rem;margin-top:12px}
+.hall{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;max-width:340px}
+.hall b{aspect-ratio:1.2;border-radius:6px 6px 12px 12px;background:var(--seat)}
+.hall b.free{background:var(--seat-free)}.hall b.me{background:var(--accent);box-shadow:0 0 0 4px rgba(242,182,50,.3)}
+.main{display:flex;align-items:center;justify-content:center;padding:32px 20px}
+.card{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:16px;padding:24px}
+.lcard{width:100%;max-width:420px;padding:32px}
+.lcard h2{font-size:1.6rem;margin-bottom:4px}.sub{color:var(--muted);margin:0 0 18px;font-size:.95rem}
+.tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--bg);border-radius:10px;padding:4px;margin-bottom:18px}
+.tabs button{border:0;background:none;color:var(--muted);font-weight:600;padding:10px;border-radius:8px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.18)}
+label{display:block;font-weight:600;font-size:.9rem;margin:14px 0 6px}
+input[type=text],input[type=password],input[type=number],input[type=date],select,textarea{width:100%;background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:11px 13px}
+input[aria-invalid="true"]{border-color:var(--err)}
+.field{position:relative}.toggle{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--muted);font-weight:600;font-size:.85rem;padding:8px 10px;cursor:pointer}
+.row{display:flex;justify-content:space-between;align-items:center;margin:14px 0 20px;font-size:.9rem;gap:12px}
+.row label{margin:0;font-weight:400;display:flex;align-items:center;gap:8px}
+.err{color:var(--err);font-size:.85rem;margin:6px 0 0}
+.msg{border-radius:10px;padding:12px 14px;font-size:.92rem;margin-top:16px;background:rgba(23,113,79,.12);color:var(--ok)}.msg.bad{background:rgba(179,38,30,.12);color:var(--err)}
+.back{margin-top:18px;text-align:center;font-size:.9rem}
+/* app */
+.shell{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+.nav{background:var(--panel);color:var(--panel-ink);padding:24px 16px;display:flex;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh}
+.nav small{color:#8ea0b3;letter-spacing:.12em;font-size:.7rem;margin:22px 10px 6px}
+.nav a{color:var(--panel-ink);text-decoration:none;padding:10px 12px;border-radius:10px;display:flex;gap:10px;font-weight:500}
+.nav a.on{background:rgba(255,255,255,.1);box-shadow:inset 3px 0 0 var(--accent)}
+.quick{margin-top:12px;text-align:left;border:1px dashed rgba(255,255,255,.3);background:none;color:var(--panel-ink);border-radius:12px;padding:12px;cursor:pointer}
+.quick b{display:block}.quick span{font-size:.8rem;color:#b9c6d4}
+.who{margin-top:auto;display:flex;gap:10px;align-items:center;font-size:.85rem}
+.av{width:36px;height:36px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:700;flex:none}
+.who span{display:block;color:#9aabbd}
+.content{padding:28px clamp(16px,4vw,48px) 48px;max-width:1100px;width:100%}
+.crumb{color:rgba(255,255,255,.75);font-size:.78rem;letter-spacing:.1em;margin-bottom:6px}.content>.tip{color:rgba(255,255,255,.8)}#tm{background:var(--card)}
+.content h1{font-size:clamp(1.7rem,3vw,2.3rem);margin:4px 0 6px}.lead{color:rgba(255,255,255,.8);margin:0 0 22px}
+.head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:20px 0 28px}
+.stat b{font:700 2rem "Bricolage Grotesque",sans-serif;display:block;line-height:1.1}.stat span{color:var(--muted);font-size:.85rem}
+h3{font-size:1.2rem;margin:0 0 2px}
+.tw{overflow-x:auto;margin-top:12px}table{width:100%;border-collapse:collapse;font-size:.92rem;min-width:520px}
+th{text-align:left;color:var(--muted);font-size:.72rem;letter-spacing:.08em;padding:8px 10px}
+td{padding:12px 10px;border-top:1px solid var(--line)}tbody tr{cursor:pointer}tbody tr:hover{background:var(--bg)}
+.chip{font-size:.78rem;font-weight:600;padding:3px 10px;border-radius:99px;background:rgba(23,113,79,.14);color:var(--ok)}.chip.bad{background:rgba(179,38,30,.14);color:var(--err)}
+.cta{margin-top:22px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;background:var(--panel);color:var(--panel-ink)}
+.cta p{margin:2px 0 0;color:#b9c6d4}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0 16px}
+.rooms .r{display:grid;grid-template-columns:1fr 110px 40px;gap:10px;margin-bottom:10px}
+.x{border:1.5px solid var(--line);background:none;border-radius:10px;cursor:pointer}
+.tip{color:var(--muted);font-size:.85rem;margin:8px 0 0}
+.card+.card{margin-top:18px}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:22px}
+.ok{display:flex;gap:14px;align-items:center;background:var(--card);color:var(--ok);border-radius:12px;padding:14px 16px;margin:18px 0}.ok.bad{background:var(--card);color:var(--err)}.ok span{color:var(--ink);font-size:.9rem}
+.seats{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-top:12px;max-width:480px}
+.seat{aspect-ratio:1.2;border-radius:6px 6px 12px 12px;border:0;background:var(--seat);color:#fff;font-size:.75rem;font-weight:600;cursor:pointer}
+.seat.free{background:var(--seat-free)}.seat.gap{background:none;border:1.5px dashed var(--line);cursor:default}
+.legend{font-size:.82rem;color:rgba(255,255,255,.8);margin-top:10px}
+.saved{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:16px}.saved .card+.card{margin:0}
+.saved p{color:var(--muted);font-size:.88rem;margin:4px 0 14px}
+.drawer{position:fixed;inset:0;background:rgba(0,0,0,.45);display:grid;place-items:center;padding:20px;z-index:20}
+.drawer .card{width:100%;max-width:340px}.drawer dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:14px 0 18px}.drawer dt{color:var(--muted)}.drawer dd{margin:0;font-weight:600}
+.stu{max-width:720px;margin:6vh auto;padding:0 20px 40px}.seat.me{background:var(--accent);color:var(--accent-ink);box-shadow:0 0 0 3px rgba(242,182,50,.35)}span.seat{display:grid;place-items:center;cursor:default}details{border-top:1px solid var(--line);padding:10px 0}summary{cursor:pointer;font-weight:600}details .tip{margin:6px 0 0}.det{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin:16px 0}.det div{background:var(--bg);border-radius:12px;padding:12px}.det small{display:block;color:var(--muted);font-size:.75rem}.det b{font-size:1.2rem}
+@media(max-width:820px){.wrap{grid-template-columns:1fr}.side{padding:28px 24px;gap:20px}.hall{display:none}.side h1{font-size:1.9rem}.main{align-items:flex-start}
+.shell{grid-template-columns:1fr}.nav{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;padding:14px}.nav small,.quick{display:none}.who{margin:0 0 0 auto}}
+@media print{body{background:#fff;color:#000}.nav,.bar,.head .bar{display:none}.shell{display:block}.stu .card+.card,.stu .lead,#v-student .brand{display:none}}
+@media(prefers-reduced-motion:no-preference){.lcard{animation:in .35s ease-out}@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}}
+</style>
+</head>
+<body>
+
+<div class="wrap" id="v-login">
+  <aside class="side">
+    <div class="brand"><i></i>AcademiaSeat</div>
+    <div><h1>Find your seat. Plan the room.</h1><p>Students check where they sit. Staff build and update seating plans for classes and exams.</p></div>
+    <div><div class="hall" aria-hidden="true"><b></b><b class="free"></b><b></b><b></b><b class="free"></b><b></b><b></b><b></b><b class="me"></b><b></b><b></b><b class="free"></b><b class="free"></b><b></b><b></b><b></b><b></b><b></b></div>
+    <div class="hall-cap">Your seat is highlighted after you log in.</div></div>
+  </aside>
+  <main class="main">
+    <section class="card lcard" id="login-view" aria-labelledby="lt">
+      <h2 id="lt">Log in</h2><p class="sub">Choose your account type to continue.</p>
+      <div class="tabs" role="tablist" aria-label="Account type"><button role="tab" aria-selected="true" data-role="student">Student</button><button role="tab" aria-selected="false" data-role="staff">Staff</button></div>
+      <form id="lf" novalidate>
+        <label for="uid" id="uid-l">Student ID</label><input type="text" id="uid" autocomplete="username" placeholder="e.g. 2025-1001"><p class="err" id="uid-e" role="alert"></p>
+        <label for="pw">Password</label><div class="field"><input type="password" id="pw" autocomplete="current-password" placeholder="Enter your password"><button type="button" class="toggle" id="tg" aria-label="Show password">Show</button></div><p class="err" id="pw-e" role="alert"></p>
+        <div class="row"><label><input type="checkbox" id="rem"> Keep me logged in</label><button type="button" class="link" id="tof">Forgot password?</button></div>
+        <button class="btn full" type="submit">Log in</button>
+      </form>
+    </section>
+    <section class="card lcard hide" id="forgot-view" aria-labelledby="ft">
+      <h2 id="ft">Reset your password</h2><p class="sub">Enter your ID or school email. We will send a link to reset your password.</p>
+      <form id="ff" novalidate><label for="fid">ID or school email</label><input type="text" id="fid" placeholder="ID or name@school.edu"><p class="err" id="fid-e" role="alert"></p>
+      <div style="height:18px"></div><button class="btn full" type="submit">Send reset link</button><div id="fm" class="msg hide" role="status">If an account matches, a reset link is on its way. Check your school email and spam folder.</div></form>
+      <div class="back"><button type="button" class="link" id="tol">Back to log in</button></div>
+    </section>
+  </main>
+</div>
+
+<div class="stu hide" id="v-student"><div class="brand" style="margin-bottom:20px"><i></i>AcademiaSeat</div>
+  <div id="stu-out"></div><div class="bar"><button class="btn ghost" data-out>Log out</button></div></div>
+
+<div class="shell hide" id="v-app">
+  <nav class="nav" aria-label="Workspace">
+    <div class="brand"><i></i>AcademiaSeat</div>
+    <small>WORKSPACE</small>
+    <a href="#overview" data-r="overview">▦ Overview</a><a href="#setup" data-r="setup">☷ Exam setup</a><a href="#plan" data-r="plan">▤ Seating plan</a><a href="#saved" data-r="saved">▧ Saved plans</a>
+    <button class="quick" id="quick"><b>ϟ Quick allocation</b><span>Generate a plan in seconds.</span></button>
+    <div class="who"><div class="av">HS</div><div>Harwant Singh Sohal<span>Exam coordinator</span></div><button class="link" data-out style="color:#9aabbd;margin-left:auto">Log out</button></div>
+  </nav>
+  <main class="content" id="c"></main>
+</div>
+
+<div class="drawer hide" id="dr" role="dialog" aria-modal="true" aria-label="Seat details"><div class="card" id="dr-b"></div></div>
+
+<script>
+(function(){
+var $=function(s){return document.querySelector(s)},esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
+function ld(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+var NAMES="Aarav Shah,Maya Iyer,Noah Brown,Emma Clark,Liam Reed,Zara Khan,Ethan Cole,Isla Moore,Omar Ali,Chloe Park,Lucas Gray,Anya Rao,Mason Ford,Ruby Lane,Kabir Das,Sofia Diaz,Leo Hart,Nina Roy,Owen Webb,Tara Sen,Finn Ross,Priya Nair,Jack Lowe,Ella Kerr,Dev Patel,Mia Stone,Adam Fox,Lena Bose,Sam Cruz,Ivy Chen,Rohan Mehta,Grace Holt,Arjun Roy,Hana Ito,Theo Burns,Kiara Jain,Max Dunn,Alia Zaidi,Ben Shaw,Nora Quinn,Vihaan Gill,Cora Bell".split(","),SUBJ=["Mathematics","Physics","Chemistry","English"];
+function sample(n){var a=[];for(var i=0;i<n;i++)a.push({id:i?"2025-"+(1001+i):"12617535",name:i?NAMES[i%NAMES.length]:"M. Shiva Sudhaman Reddy",subj:SUBJ[(i*7+i%3)%4]});return a}
+function seed(){return{id:"p1",title:"Spring Term Final Examinations",code:"STF-2025",date:"2025-06-18",dur:"3 hours",spacing:0,apart:true,rooms:[{name:"Hall A",cap:18},{name:"Hall B",cap:12},{name:"Room 101",cap:12},{name:"Room 102",cap:12}],cands:sample(42)}}
+var plans=ld("as_plans",null)||[seed()],cur=plans[0].id,user=ld("as_user",null),role="student";plans.forEach(function(p){if(p.id==="p1"&&!p.cands.some(function(c){return c.id==="12617535"}))p.cands[0].id="12617535"});plans.forEach(function(p){p.cands.forEach(function(c){if(c.id==="12617535")c.name="M. Shiva Sudhaman Reddy"})});
+function alloc(x){var step=+x.spacing+1,g={},list=[],i=0;
+x.cands.forEach(function(c){(g[c.subj]=g[c.subj]||[]).push(c)});
+var gs=Object.keys(g).map(function(k){return g[k]}).sort(function(a,b){return b.length-a.length});
+if(x.apart){while(gs.some(function(q){return q.length}))gs.forEach(function(q){if(q.length)list.push(q.shift())})}else list=x.cands.slice();
+var rooms=x.rooms.map(function(r){var s=[];for(var n=0;n<r.cap;n++){var o={n:n+1,c:null};if(n%step)o.gap=1;else if(i<list.length)o.c=list[i++];s.push(o)}return{name:r.name,seats:s}});
+return{rooms:rooms,un:list.length-i,seated:i}}
+function getPlan(){return plans.filter(function(p){return p.id===cur})[0]||plans[0]}
+function save(){sv("as_plans",plans)}
+
+/* login */
+function setRole(r){role=r;document.querySelectorAll(".tabs button").forEach(function(b){b.setAttribute("aria-selected",b.dataset.role===r)});
+$("#uid-l").textContent=r==="student"?"Student ID":"Staff ID";$("#uid").placeholder=r==="student"?"e.g. 2025-1001":"e.g. STF-2041"}
+document.querySelectorAll(".tabs button").forEach(function(b){b.addEventListener("click",function(){setRole(b.dataset.role)})});
+$("#tg").addEventListener("click",function(){var p=$("#pw"),s=p.type==="password";p.type=s?"text":"password";this.textContent=s?"Hide":"Show";this.setAttribute("aria-label",s?"Hide password":"Show password")});
+function flag(i,e,t){e.textContent=t||"";i.setAttribute("aria-invalid",t?"true":"false");return !t}
+$("#lf").addEventListener("submit",function(e){e.preventDefault();
+var a=flag($("#uid"),$("#uid-e"),$("#uid").value.trim()?"":"Enter your "+role+" ID."),b=flag($("#pw"),$("#pw-e"),$("#pw").value?"":"Enter your password.");
+if(!a||!b)return;
+/* Demo sign-in: replace with a real server login request. */
+user={role:role,id:$("#uid").value.trim()};if($("#rem").checked)sv("as_user",user);$("#pw").value="";go()});
+$("#tof").addEventListener("click",function(){$("#login-view").classList.add("hide");$("#forgot-view").classList.remove("hide");$("#fid").value=$("#uid").value;$("#fid").focus()});
+$("#tol").addEventListener("click",function(){$("#forgot-view").classList.add("hide");$("#login-view").classList.remove("hide");$("#uid").focus()});
+$("#ff").addEventListener("submit",function(e){e.preventDefault();var ok=flag($("#fid"),$("#fid-e"),$("#fid").value.trim()?"":"Enter your ID or school email.");$("#fm").classList.toggle("hide",!ok)});
+document.querySelectorAll("[data-out]").forEach(function(b){b.addEventListener("click",function(){user=null;try{localStorage.removeItem("as_user")}catch(e){}location.hash="";go()})});
+
+/* views */
+function chip(p){var u=alloc(p).un;return'<span class="chip'+(u?" bad":"")+'">'+(u?u+" unseated":"Validated")+"</span>"}
+function fmt(d){try{return new Date(d+"T00:00:00").toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})}catch(e){return d}}
+function repHtml(){var r=ld("as_reports",[]);if(!r.length)return"";return'<div class="card" style="margin-top:22px"><h3>Student reports ('+r.length+')</h3><p class="tip" style="margin:0 0 8px">Problems students reported from their seat page.</p>'+r.slice().reverse().map(function(x,i){return'<div style="border-top:1px solid var(--line);padding:10px 0"><b>'+esc(x.name)+'</b> · '+esc(x.id)+' · '+esc(x.exam)+', '+esc(x.room)+' seat '+x.seat+'<br>'+esc(x.text)+'<br><button class="link" data-rd="'+(r.length-1-i)+'">Dismiss</button></div>'}).join('')+'</div>'}
+function vOverview(){var seated=0,rm=0,seats=0,val=0;plans.forEach(function(p){var a=alloc(p);seated+=a.seated;rm+=p.rooms.length;p.rooms.forEach(function(r){seats+=r.cap});if(!a.un)val++});
+var h=new Date().getHours(),g=h<12?"morning":h<17?"afternoon":"evening";
+return'<div class="head"><div><div class="crumb">ACADEMIASEAT › OVERVIEW</div><h2 style="font-size:1.1rem;color:rgba(255,255,255,.8);font-weight:500">Good '+g+', Harwant.</h2><h1>Your examination workspace</h1><p class="lead">Keep every seating plan accurate, fair, and ready to share.</p></div><div class="bar" style="margin:0"><button class="btn" data-go="setup">＋ New examination</button></div></div>'+
+'<div class="stats"><div class="card stat"><b>'+plans.length+'</b><span>Active examinations</span></div><div class="card stat"><b>'+seated+'</b><span>Candidates seated</span></div><div class="card stat"><b>'+rm+'</b><span>Rooms in use · '+seats+' total seats</span></div><div class="card stat"><b>'+val+'</b><span>Plans validated</span></div></div>'+
+'<div class="card"><div class="head"><div><h3>Recent examinations</h3><p class="tip" style="margin:0">Open a plan to review or make changes.</p></div><button class="link" data-go="saved">View all ›</button></div><div class="tw"><table><thead><tr><th>EXAMINATION</th><th>DATE</th><th>CANDIDATES</th><th>STATUS</th></tr></thead><tbody>'+
+plans.slice(-5).reverse().map(function(p){return'<tr tabindex="0" data-open="'+p.id+'"><td><b>'+esc(p.title)+"</b><br><small>"+esc(p.code)+"</small></td><td>"+fmt(p.date)+"</td><td>"+p.cands.length+"</td><td>"+chip(p)+"</td></tr>"}).join("")+'</tbody></table></div></div>'+
+repHtml()+'<div class="card cta"><div><h3>✦ Ready for your next plan?</h3><p>Start with your exam details and let AcademiaSeat handle the distribution.</p></div><button class="btn" data-go="setup">Start setup ›</button></div>'}
+
+var draft=ld("as_draft",null)||{title:"",code:"",date:"",dur:"2 hours",spacing:0,apart:true,rooms:[{name:"Hall A",cap:20}],text:""};
+function roomRows(){return draft.rooms.map(function(r,i){return'<div class="r"><input type="text" class="rn" value="'+esc(r.name)+'" aria-label="Room name"><input type="number" class="rc" min="1" max="500" value="'+r.cap+'" aria-label="Seat capacity"><button type="button" class="x" data-rm="'+i+'" aria-label="Remove room">×</button></div>'}).join("")}
+function vSetup(){var d=draft;function o(a,v){return a.map(function(x){return'<option'+(String(x[0])===String(v)?" selected":"")+' value="'+x[0]+'">'+x[1]+"</option>"}).join("")}
+return'<div class="crumb">STEP 01 / EXAM SETUP</div><h1>Prepare the seating plan</h1><p class="lead">Enter the essentials, then add rooms and candidates.</p>'+
+'<div class="card"><h3>Examination details</h3><p class="tip" style="margin:0 0 6px">This information appears on printed plans and reports.</p><div class="grid2"><div><label for="d-t">Examination title</label><input type="text" id="d-t" value="'+esc(d.title)+'"></div><div><label for="d-c">Exam code</label><input type="text" id="d-c" value="'+esc(d.code)+'"></div><div><label for="d-d">Examination date</label><input type="date" id="d-d" value="'+esc(d.date)+'"></div><div><label for="d-u">Duration</label><select id="d-u">'+o(["1 hour","2 hours","3 hours","4 hours","Half day"].map(function(x){return[x,x]}),d.dur)+'</select></div></div>'+
+'<h3 style="margin-top:22px">Seating rules</h3><div class="grid2"><div><label for="d-s">Empty seat spacing</label><select id="d-s">'+o([[0,"No empty seats"],[1,"Every other seat"],[2,"Every third seat"]],d.spacing)+'</select></div><div><label>&nbsp;</label><label style="font-weight:400;display:flex;gap:8px;align-items:center;margin:0;padding:11px 0"><input type="checkbox" id="d-a"'+(d.apart?" checked":"")+'> Keep same subjects apart</label></div></div></div>'+
+'<div class="card"><h3>Rooms &amp; capacity</h3><p class="tip" style="margin:0 0 12px">Add the rooms available for this examination.</p><div class="rooms" id="rooms">'+roomRows()+'</div><button type="button" class="btn ghost" id="addr">＋ Add another room</button><p class="tip">Tip: Set each room’s seat capacity. The allocation engine distributes candidates within these limits.</p></div>'+
+'<div class="card"><h3>Candidate list</h3><p class="tip" style="margin:0 0 10px">Format: Candidate ID, Candidate name, Subject. One candidate per line.</p><textarea id="d-l" rows="8" aria-label="Candidate list" placeholder="2025-1001, Aarav Shah, Mathematics">'+esc(d.text)+'</textarea><div class="bar"><button type="button" class="btn ghost" id="samp">Load sample candidates</button><span class="tip" id="cnt" style="margin:0"></span></div></div>'+
+'<div class="bar"><span class="tip" id="sv" style="margin:0 12px 0 0"></span><button type="button" class="btn ghost" id="sd">Save draft</button><button type="button" class="btn" id="gen">Continue ›</button></div><div id="se" class="msg bad hide" role="alert"></div>'}
+function parse(t){return t.split("\n").map(function(l){var p=l.split(",").map(function(s){return s.trim()});return p.length>=3&&p[0]&&p[1]?{id:p[0],name:p[1],subj:p.slice(2).join(", ")}:null}).filter(Boolean)}
+function collect(){var d=draft;d.title=$("#d-t").value;d.code=$("#d-c").value;d.date=$("#d-d").value;d.dur=$("#d-u").value;d.spacing=+$("#d-s").value;d.apart=$("#d-a").checked;d.text=$("#d-l").value;
+var n=document.querySelectorAll(".rn"),c=document.querySelectorAll(".rc");d.rooms=[].map.call(n,function(x,i){return{name:x.value.trim()||"Room "+(i+1),cap:Math.max(1,Math.min(500,+c[i].value||1))}})}
+function bindSetup(){function cnt(){$("#cnt").textContent=parse($("#d-l").value).length+" candidates added"}cnt();$("#d-l").addEventListener("input",cnt);
+$("#addr").onclick=function(){collect();draft.rooms.push({name:"Room "+(draft.rooms.length+1),cap:20});$("#c").innerHTML=vSetup();bindSetup()};
+document.querySelectorAll("[data-rm]").forEach(function(b){b.onclick=function(){collect();if(draft.rooms.length>1)draft.rooms.splice(+b.dataset.rm,1);$("#c").innerHTML=vSetup();bindSetup()}});
+$("#samp").onclick=function(){$("#d-l").value=sample(42).map(function(c){return c.id+", "+c.name+", "+c.subj}).join("\n");cnt()};
+$("#sd").onclick=function(){collect();sv("as_draft",draft);$("#sv").textContent="Last saved just now"};
+$("#gen").onclick=function(){collect();var cs=parse(draft.text),e=$("#se");
+if(!draft.title.trim()||!cs.length){e.textContent=!draft.title.trim()?"Enter an examination title.":"Add at least one candidate (ID, name, subject).";e.classList.remove("hide");return}
+var p={id:"p"+Date.now(),title:draft.title.trim(),code:draft.code.trim()||"EXAM",date:draft.date||new Date().toISOString().slice(0,10),dur:draft.dur,spacing:draft.spacing,apart:draft.apart,rooms:draft.rooms,cands:cs};
+plans.push(p);save();cur=p.id;go("plan")}}
+
+function vPlan(){var p=getPlan();if(!p)return'<h1>No plan yet</h1><p class="lead">Create an examination to see its seating plan.</p><button class="btn" data-go="setup">Start setup ›</button>';
+var a=alloc(p);
+return'<div class="head"><div><div class="crumb">ALLOCATION RESULTS · '+esc(p.code)+'</div><h1>'+esc(p.title)+'</h1><p class="lead">'+fmt(p.date)+" · "+p.cands.length+" candidates · "+p.rooms.length+' rooms</p></div><div class="bar" style="margin:0"><button class="btn ghost" id="pr">Print</button><button class="btn ghost" id="csv">Copy CSV</button><button class="btn" id="pub">Publish plan</button></div></div><div id="tm" class="msg hide" role="status"></div>'+
+'<div class="ok'+(a.un?" bad":"")+'"><b>'+(a.un?"! Not enough seats":"✓ Allocation complete")+'</b><span>'+(a.un?a.un+" candidates could not be seated. Add rooms or capacity.":"All candidates have been assigned with your spacing rules applied.")+'</span><b style="margin-left:auto">'+a.un+' conflicts</b></div>'+
+'<h3>Room-by-room seating</h3><p class="tip" style="margin:0">Click a seat to inspect its candidate assignment.</p>'+
+a.rooms.map(function(r,ri){return'<div class="card"><h3>'+esc(r.name)+'</h3><div class="seats">'+r.seats.map(function(s,si){return s.gap?'<span class="seat gap"></span>':'<button class="seat'+(s.c?"":" free")+'" data-s="'+ri+"-"+si+'" aria-label="Seat '+s.n+(s.c?", "+esc(s.c.name):", empty")+'">'+s.n+"</button>"}).join("")+'</div></div>'}).join("")+'<p class="legend">Dark seats are assigned, green seats are free, dashed seats are kept empty.</p>'}
+function bindPlan(){var p=getPlan();if(!p)return;var a=alloc(p);
+document.querySelectorAll("[data-s]").forEach(function(b){b.onclick=function(){var k=b.dataset.s.split("-"),r=a.rooms[k[0]],s=r.seats[k[1]];
+$("#dr-b").innerHTML='<h2>Seat '+String(s.n).padStart(2,"0")+"</h2><dl><dt>Room</dt><dd>"+esc(r.name)+"</dd>"+(s.c?"<dt>Candidate</dt><dd>"+esc(s.c.name)+"</dd><dt>ID</dt><dd>"+esc(s.c.id)+"</dd><dt>Subject</dt><dd>"+esc(s.c.subj)+"</dd>":"<dt>Status</dt><dd>Available</dd>")+'</dl><button class="btn full" id="dn">Done</button>';
+$("#dr").classList.remove("hide");$("#dn").focus();$("#dn").onclick=function(){$("#dr").classList.add("hide")}}});
+function tm(t){var m=$("#tm");m.textContent=t;m.classList.remove("hide")}
+$("#pr").onclick=function(){try{window.print()}catch(e){tm("Printing isn’t available here.")}};
+$("#csv").onclick=function(){var rows=["Room,Seat,Candidate ID,Name,Subject"];a.rooms.forEach(function(r){r.seats.forEach(function(s){if(s.c)rows.push([r.name,s.n,s.c.id,s.c.name,s.c.subj].join(","))})});
+try{navigator.clipboard.writeText(rows.join("\n")).then(function(){tm("CSV copied to your clipboard.")},function(){tm("Clipboard is blocked in this browser.")})}catch(e){tm("Clipboard is blocked in this browser.")}};
+$("#pub").onclick=function(){p.published=true;save();tm("Plan published. Students can now find their seats with their ID.")}}
+
+function vSaved(){return'<div class="head"><div><div class="crumb">YOUR WORKSPACE</div><h1>Saved examination plans</h1><p class="lead">Reopen, revise, or share a plan whenever you need it.</p></div><div class="bar" style="margin:0"><button class="btn" data-go="setup">＋ New examination</button></div></div><div class="saved">'+
+plans.map(function(p){return'<div class="card"><h3>'+esc(p.title)+"</h3><p>"+esc(p.code)+" · "+fmt(p.date)+" · "+p.cands.length+" candidates</p>"+chip(p)+'<div class="bar" style="margin-top:14px"><button class="btn" data-open="'+p.id+'">Open</button><button class="btn ghost" data-del="'+p.id+'">Delete</button></div></div>'}).join("")+"</div>"}
+
+var stuSel=0;function vStudent(){var id=user.id.toLowerCase(),all=[];plans.forEach(function(p){var a=alloc(p);a.rooms.forEach(function(r){r.seats.forEach(function(s){if(s.c&&s.c.id.toLowerCase()===id)all.push({p:p,r:r,s:s})})})});
+var h;if(!all.length){h='<div class="card"><h2>Your seat</h2><p class="sub" style="margin-top:10px">No seat found for ID '+esc(user.id)+'. Seating plans appear here once your school publishes them. Check that your ID is typed exactly as on your admit card.</p></div>'}else{stuSel=Math.min(stuSel,all.length-1);var f=all[stuSel],p=f.p,d=Math.round((new Date(p.date+"T00:00:00")-new Date().setHours(0,0,0,0))/864e5),when=d>0?"In "+d+" day"+(d>1?"s":""):d===0?"Today":"Completed";
+h='<h1 style="font-size:1.8rem;margin:0 0 4px">Hello, '+esc(f.s.c.name)+'</h1><p class="lead">Roll no. '+esc(f.s.c.id)+' · '+all.length+' exam'+(all.length>1?'s':'')+' found</p>'+(all.length>1?'<div class="bar" style="margin:0 0 16px">'+all.map(function(x,i){return'<button class="btn'+(i===stuSel?'':' ghost')+'" data-ex="'+i+'">'+esc(x.p.code)+'</button>'}).join('')+'</div>':'')+
+'<div class="card"><div class="head"><div><h3>'+esc(p.title)+'</h3><p class="tip" style="margin:0">'+esc(p.code)+' · '+fmt(p.date)+' · '+esc(p.dur)+'</p></div><span class="chip'+(d<0?' bad':'')+'">'+when+'</span></div><div class="det"><div><small>Room</small><b>'+esc(f.r.name)+'</b></div><div><small>Seat</small><b>'+f.s.n+'</b></div><div><small>Subject</small><b>'+esc(f.s.c.subj)+'</b></div></div><h3 style="font-size:1rem">Your seat in the room</h3><div class="seats">'+f.r.seats.map(function(s){return'<span class="seat'+(s===f.s?' me':s.gap?' gap':s.c?'':' free')+'">'+(s.gap?'':s.n)+'</span>'}).join('')+'</div><p class="legend" style="color:var(--muted)">Yellow is your seat.</p><div class="bar"><button class="btn" id="stp">Print seat slip</button><button class="btn ghost" id="stc">Copy details</button></div><div id="stm" class="msg hide" role="status"></div></div>'+
+'<div class="card"><h3>Before you go</h3><ul class="tip" style="padding-left:18px;line-height:1.8"><li>Bring your student ID card.</li><li>Arrive 30 minutes before the exam starts.</li><li>Switch off phones and smart watches.</li><li>Bring only the stationery your school allows.</li></ul></div>'+'<div class="card"><h3>Something wrong?</h3><p class="tip" style="margin:0 0 10px">Tell the exam office if your seat, subject or name is incorrect.</p><textarea id="rt" rows="3" maxlength="300" aria-label="Describe the problem"></textarea><div class="bar"><button class="btn" id="rb">Send report</button></div><div id="rm" class="msg hide" role="status"></div></div>'+'<div class="card"><h3>Questions</h3><details><summary>What if I can’t find my seat?</summary><p class="tip">Ask the invigilator at the door. They have the full plan.</p></details><details><summary>Can I swap seats?</summary><p class="tip">No. Seats are assigned to keep subjects apart.</p></details><details><summary>Can my seat change?</summary><p class="tip">Yes, if staff publish an update. Check this page again on exam day.</p></details></div>'}
+$("#stu-out").innerHTML=h;
+document.querySelectorAll("[data-ex]").forEach(function(b){b.onclick=function(){stuSel=+b.dataset.ex;vStudent()}});
+var rb=$("#rb");if(rb)rb.onclick=function(){var t=$("#rt").value.trim(),m=$("#rm");if(!t){m.textContent="Describe the problem first.";m.className="msg bad";return}var f=all[stuSel],r=ld("as_reports",[]);r.push({id:f.s.c.id,name:f.s.c.name,exam:f.p.code,room:f.r.name,seat:f.s.n,text:t,at:Date.now()});sv("as_reports",r);$("#rt").value="";m.textContent="Report sent to the exam office.";m.className="msg"};
+var pr=$("#stp"),cp=$("#stc");if(pr){pr.onclick=function(){try{window.print()}catch(e){}};cp.onclick=function(){var f=all[stuSel],t=f.s.c.name+" ("+f.s.c.id+") · "+f.p.title+" · "+fmt(f.p.date)+" · Room "+f.r.name+", Seat "+f.s.n,m=$("#stm");function say(x){m.textContent=x;m.classList.remove("hide")}try{navigator.clipboard.writeText(t).then(function(){say("Seat details copied.")},function(){say("Clipboard is blocked in this browser.")})}catch(e){say("Clipboard is blocked in this browser.")}}}}
+
+function go(r){if(r)location.hash=r;route()}
+function route(){var h=location.hash.slice(1)||"overview";
+["#v-login","#v-student","#v-app"].forEach(function(s){$(s).classList.add("hide")});
+if(!user){$("#v-login").classList.remove("hide");return}
+if(user.role==="student"){vStudent();$("#v-student").classList.remove("hide");return}
+$("#v-app").classList.remove("hide");if(!{overview:1,setup:1,plan:1,saved:1}[h])h="overview";
+document.querySelectorAll(".nav a").forEach(function(a){a.classList.toggle("on",a.dataset.r===h)});
+var c=$("#c");c.innerHTML={overview:vOverview,setup:vSetup,plan:vPlan,saved:vSaved}[h]();
+if(h==="setup")bindSetup();if(h==="plan")bindPlan();window.scrollTo(0,0)}
+document.addEventListener("click",function(e){var t=e.target.closest("[data-go],[data-open],[data-del]");if(!t)return;
+if(t.dataset.go)go(t.dataset.go);else if(t.dataset.open){cur=t.dataset.open;go("plan")}else if(plans.length>1){plans=plans.filter(function(p){return p.id!==t.dataset.del});save();cur=plans[0].id;route()}});
+document.addEventListener("keydown",function(e){if(e.key==="Escape")$("#dr").classList.add("hide");if(e.key==="Enter"&&e.target.dataset&&e.target.dataset.open){cur=e.target.dataset.open;go("plan")}});
+$("#dr").addEventListener("click",function(e){if(e.target===this)this.classList.add("hide")});
+$("#quick").addEventListener("click",function(){var p=seed();p.id="p"+Date.now();p.title="Quick allocation";p.code="QA-"+String(plans.length+1).padStart(3,"0");p.date=new Date().toISOString().slice(0,10);plans.push(p);save();cur=p.id;go("plan")});
+document.addEventListener("click",function(e){var b=e.target.closest("[data-rd]");if(!b)return;var r=ld("as_reports",[]);r.splice(+b.dataset.rd,1);sv("as_reports",r);route()});
+window.addEventListener("hashchange",route);route();
+})();
+</script>
+</body>
+</html>
